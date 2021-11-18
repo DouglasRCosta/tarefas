@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { Tarefas } from '../models/Tarefas';
-
+import { checkTamanho } from './helpers/checkTamanho';
 
 export const all = async (req: Request, res: Response) => {
     let tarefas = await Tarefas.findAll();
@@ -8,21 +8,25 @@ export const all = async (req: Request, res: Response) => {
 }
 export const add = async (req: Request, res: Response) => {
     if (req.body.title) {
-        let { title, done } = req.body;
+        let { title, done, content } = req.body;
+        if (checkTamanho(content, title)) {
+            res.json({ err: 'content ou title muito grande tamanho maximo do content 255 caracteres e title 50 caracteres' });
+        }
         let nova = await Tarefas.create({
             title,
-            done
+            done,
+            content
         })
         res.json(nova);
     }
 }
-export const update = async (req: Request, res: Response) => {  
+export const update = async (req: Request, res: Response) => {
     let { id } = req.params;
     let { title, done, content } = req.body
     let update = await Tarefas.findByPk(id);
 
     if (req.params.id) {
-        if (content.length > 255 || title.length > 50) {
+        if (checkTamanho(content, title)) {
             res.json({ err: 'content ou title muito grande tamanho maximo do content 255 caracteres e title 50 caracteres' });
         }
         if (update) {
