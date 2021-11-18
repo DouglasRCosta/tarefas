@@ -16,21 +16,27 @@ export const add = async (req: Request, res: Response) => {
         res.json(nova);
     }
 }
-export const update = async (req: Request, res: Response) => {
-        let { id } = req.params;
-    if (req.params.id) {      
-        let { title, done } = req.body
-        let update = await Tarefas.findByPk(id);
+export const update = async (req: Request, res: Response) => {  
+    let { id } = req.params;
+    let { title, done, content } = req.body
+    let update = await Tarefas.findByPk(id);
+
+    if (req.params.id) {
+        if (content.length > 255 || title.length > 50) {
+            res.json({ err: 'content ou title muito grande tamanho maximo do content 255 caracteres e title 50 caracteres' });
+        }
         if (update) {
+            update.content = content;
             (title) ? update.title = title : null;
-            if(done){
-                (done == 0 || done == 1)? update.done = done :update.done = 0;
+            if (done) {
+                (done == 0 || done == 1) ? update.done = done : update.done = 0;
             }
+
             update.save();
             res.json(update);
         }
     }
-    res.json({err:'id null'});
+    res.json({ err: 'id null' });
 }
 export const remove = async (req: Request, res: Response) => {
 

@@ -4,7 +4,8 @@ import { sequelize } from '../instances/my';
 export interface tarefasInterface extends Model{
     id:number,
     title:string,
-    done:number
+    done:number,
+    content:string
 }
 
 export const Tarefas = sequelize.define<tarefasInterface>('Tarefas',{
@@ -19,6 +20,9 @@ export const Tarefas = sequelize.define<tarefasInterface>('Tarefas',{
     done:{
         type:DataTypes.NUMBER,
         defaultValue: 0
+    },
+    content:{
+        type:DataTypes.STRING
     }
 },{
     tableName:'tarefas',
