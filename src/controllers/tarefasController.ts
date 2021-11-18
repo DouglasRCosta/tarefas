@@ -7,8 +7,10 @@ export const all = async (req: Request, res: Response) => {
     res.json(tarefas);
 }
 export const add = async (req: Request, res: Response) => {
+    let { title, done, content } = req.body;
     if (req.body.title) {
-        let { title, done, content } = req.body;
+        (done == 0 || done == 1) ? null : done = 0;
+
         if (checkTamanho(content, title)) {
             res.json({ err: 'content ou title muito grande tamanho maximo do content 255 caracteres e title 50 caracteres' });
         }
@@ -32,9 +34,8 @@ export const update = async (req: Request, res: Response) => {
         if (update) {
             update.content = content;
             (title) ? update.title = title : null;
-            if (done) {
-                (done == 0 || done == 1) ? update.done = done : update.done = 0;
-            }
+            (done == 0 || done == 1) ? update.done = done : update.done = 0;
+
 
             update.save();
             res.json(update);
