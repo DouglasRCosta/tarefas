@@ -23,26 +23,31 @@ export const add = async (req: Request, res: Response) => {
     }
 }
 export const update = async (req: Request, res: Response) => {
-    let { id } = req.params;
+    let id: string = req.params.id as string;
     let { title, done, content } = req.body
     let update = await Tarefas.findByPk(id);
 
-    if (req.params.id) {
-        if (checkTamanho(content, title)) {
-            res.json({ err: 'content ou title muito grande tamanho maximo do content 255 caracteres e title 50 caracteres' });
-        }
-        if (update) {
-            update.content = content;
-            (title) ? update.title = title : null;
-            (done == 0 || done == 1) ? update.done = done : update.done = 0;
-
-
-            update.save();
-            res.json(update);
-        }
+    if (checkTamanho(content, title)) {
+        res.json({ err: 'content ou title muito grande tamanho maximo do content 255 caracteres e title 50 caracteres' });
     }
-    res.json({ err: 'id null' });
+    if (update) {
+        update.content = content;
+        (title) ? update.title = title : null;
+        (done == "0" || done == "1") ? update.done = done : update.done = 0;
+
+
+        update.save();
+        res.json(update);
+    } else {
+        res.json({ err: 'id null' });
+    }
 }
 export const remove = async (req: Request, res: Response) => {
-
+    let remove = await Tarefas.findByPk(req.params.id);
+    if (remove) {
+        await  remove.destroy()
+        res.json({ res: 'removido' })
+    } else {
+        res.json({ res: 'conteudo nao existe' })
+    }
 }
